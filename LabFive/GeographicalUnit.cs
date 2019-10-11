@@ -17,6 +17,19 @@ namespace LabOne
             this.Population = population;
             this.Form = form;
         }
+        public String getName()
+        {
+            return Country;
+        }
+        public int getPopulation()
+        {
+            return Population;
+        }
+        public FormOfGov getForm()
+        {
+            return Form;
+        }
+
         public GeographicalUnit()
         {
         }
