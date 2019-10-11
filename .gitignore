@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/LabFive/DesignTimeBuild/.dtbcache
+/.vs
+/LabFive/obj/Debug/netcoreapp3.0

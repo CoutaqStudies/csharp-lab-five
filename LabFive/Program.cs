@@ -9,7 +9,8 @@ namespace LabFive
         public static void Main(string[] args)
         {
             List<GeographicalUnit> countries = new List<GeographicalUnit>();
-            ConsoleApp.Execute(countries);
+            List<LogEntry> log = new List<LogEntry>();
+            ConsoleApp.Execute(countries, log);
         }
     }
 }
