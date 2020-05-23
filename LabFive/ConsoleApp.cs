@@ -8,9 +8,10 @@ namespace LabFive
 {
     public class ConsoleApp
     {
-        
+        const int SHOW = 1, ADD = 2, DELETE = 3, UPDATE = 4, SEARCH = 5, SHOWLOG = 6, EXIT = 7;
         public static void Execute(List<GeographicalUnit> countries, List<LogEntry> log) 
         {
+            #region PROMPT
             String prompt = "1 – Просмотр таблицы\n2 – Добавить запись\n3 – Удалить запись\n4 – Обновить запись\n5 – Поиск записей\n6 – Просмотреть лог\n7 - Выход";
             Console.WriteLine(prompt);
             int input = 0;
@@ -22,26 +23,28 @@ namespace LabFive
             {
                 Execute(countries,log);
             }
+            #endregion
             switch (input)
             {
-                case 1:
-                    String output = "\n--------------------------------------\n";
+                #region SHOW
+                case SHOW:
+                    String output = String.Empty;
                      if (countries.Count==0)
                          output = ("The list is empty!");
                      else
-                     {
                          foreach (GeographicalUnit country in countries)
                              output += country.getInfoTable();
-                     }
                     Console.WriteLine(output);
                     Execute(countries,log);
                     break;
-                case 2:
+                #endregion
+                #region ADD
+                case ADD:
                         Console.Write("Please enter the country: ");
                         string name = Console.ReadLine();
                         Console.Write("Please enter the capital: ");
                         string capital = Console.ReadLine();
-                        int population = 0;
+                        int population;
                         while (true)
                         {
                             try
@@ -49,9 +52,7 @@ namespace LabFive
                                 Console.Write("Please enter the population: ");
                                 population = int.Parse(Console.ReadLine());
                                 if (population < 0)
-                                {
                                     throw new FormatException();
-                                }
                                 break;
                             }
                             catch (FormatException)
@@ -59,34 +60,28 @@ namespace LabFive
                                 Console.Write("Incorrect input, try again: ");
                             }
                         }
-                        string formString = "";
-                        string upperString = "";
                         GeographicalUnit.FormOfGov form;
                         while (true)
                         {
                             try
                             {
                                 Console.Write("Please enter the form of government: ");
-                                formString = Console.ReadLine();
-                                upperString = (formString.ToUpper()).ToString();
-                                if (upperString != "US" && upperString != "F")
-                                {
-                                    throw new FormatException();
-                                }
+                                form = (GeographicalUnit.FormOfGov)Enum.Parse(typeof(GeographicalUnit.FormOfGov), Console.ReadLine().ToUpper());
                                 break;
                             }
-                            catch (FormatException)
+                            catch (Exception)
                             {
                                 Console.Write("Incorrect input, try again: ");
                             }
-                        }
-                        form = (GeographicalUnit.FormOfGov)Enum.Parse(typeof(GeographicalUnit.FormOfGov), upperString);
+                        }    
                     countries.Add(new GeographicalUnit(name, capital, population, form ));
                     Console.WriteLine($"Added {name} to the list.");
                     log = addEntry(new LogEntry(name, LogEntry.Action.ADD), log);
                     Execute(countries,log);
                     break;
-                case 3:
+                #endregion
+                #region DELETE
+                case DELETE:
                     int entry = 0;
                     while (true)
                     {
@@ -105,13 +100,14 @@ namespace LabFive
                             Console.Write("Incorrect input, try again: ");
                         }
                     }
-
                     Console.WriteLine($"Removed {countries[entry-1].getName()} from the list.");
                     log = addEntry(new LogEntry(countries[entry - 1].getName(), LogEntry.Action.DELETE), log);
                     countries.RemoveAt(entry - 1);
                     Execute(countries,log);
                     break;
-                case 4:
+                #endregion
+                #region UPDATE
+                case UPDATE:
                     while (true)
                     {
                         try
@@ -155,27 +151,23 @@ namespace LabFive
                         try
                         {
                             Console.Write("Please enter the form of government: ");
-                            formString = Console.ReadLine();
-                            upperString = (formString.ToUpper()).ToString();
-                            if (upperString != "US" && upperString != "F")
-                            {
-                                throw new FormatException();
-                            }
+                            form = (GeographicalUnit.FormOfGov)Enum.Parse(typeof(GeographicalUnit.FormOfGov), Console.ReadLine().ToUpper());
                             break;
                         }
-                        catch (FormatException)
+                        catch (Exception)
                         {
                             Console.Write("Incorrect input, try again: ");
                         }
                     }
-                    form = (GeographicalUnit.FormOfGov)Enum.Parse(typeof(GeographicalUnit.FormOfGov), upperString);
                     Console.WriteLine($"Updated {name}.");
                     countries.RemoveAt(entry - 1);
                     countries.Insert(entry-1, new GeographicalUnit(name, capital, population, form));
                     log = addEntry(new LogEntry(name, LogEntry.Action.UPDATE), log);
                     Execute(countries,log);
                     break;
-                case 5:
+                #endregion
+                #region SEARCH
+                case SEARCH:
                     List<GeographicalUnit> old_countries = new List<GeographicalUnit>();
                     List<GeographicalUnit> removeList = new List<GeographicalUnit>();
                     old_countries = countries.ToList();
@@ -183,7 +175,6 @@ namespace LabFive
                     Console.WriteLine("Choose the filter: ");
                     if (Console.ReadLine().ToUpper() == "FORM")
                     {
-                        int number = 0;
                         Console.WriteLine("Federation(F) or Unitary state(US): ");
                         if (Console.ReadLine().ToUpper() == "F")
                         {
@@ -273,7 +264,9 @@ namespace LabFive
                     countries = old_countries.ToList();
                     Execute(countries,log);
                     break;
-                case 6:
+                #endregion
+                #region SHOWLOG
+                case SHOWLOG:
                     output = "";
                     foreach(LogEntry i in log)
                     {
@@ -283,8 +276,11 @@ namespace LabFive
                     Console.WriteLine(output);
                     Execute(countries,log);
                     break;
-                case 7:
+                #endregion
+                #region EXIT
+                case EXIT:
                     return;
+                  #endregion
             }
         }
         public static List<LogEntry> addEntry(LogEntry entry, List<LogEntry> list, int size = 50)
